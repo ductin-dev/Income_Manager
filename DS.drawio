@@ -1,9 +1,20 @@
-<mxfile host="app.diagrams.net" modified="2021-07-31T12:04:20.387Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36 OPR/77.0.4054.277" etag="S7H0VfCQTEvVCPJNaGRM" version="14.9.3" type="github" pages="2">
+<mxfile host="app.diagrams.net" modified="2021-07-31T12:05:28.657Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36 OPR/77.0.4054.277" etag="j7EpjLaf8VB3L6LCEP39" version="14.9.3" type="github" pages="2">
   <diagram id="Vcthu4iQtOqKne5wx-fZ" name="Activity">
     <mxGraphModel dx="998" dy="540" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="Mhe4ZSSdjRwLWDVHTiOj-2" value="Authenticate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="Mhe4ZSSdjRwLWDVHTiOj-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="360" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Mhe4ZSSdjRwLWDVHTiOj-1" value="Home Page (Login Page)" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" vertex="1" parent="1">
+          <mxGeometry x="120" y="160" width="80" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="Mhe4ZSSdjRwLWDVHTiOj-3" value="List of wallet" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" vertex="1" parent="1">
+          <mxGeometry x="360" y="160" width="80" height="100" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
