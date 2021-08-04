@@ -1,84 +1,149 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
+import { Redirect } from "react-router-dom";
+
+const URI = "http://localhost:8080/";
+const LOGIN_API = URI + "api/login";
+const AUTH_CHECK_API = URI + "api/checklogin";
 
 const Home = (props) => {
+  const [user, setUser] = useState({
+    User: {
+      username: "",
+      password: "",
+    },
+  });
+  const [isCallRequest, setIsCallRequest] = useState(false);
+  const [hasError, setErrors] = useState(false);
+  const [response, setResponse] = useState(null);
+  const [isLogged, setIsLogged] = useState(false);
 
-    const [user, setUser] = useState({
-        User: {
-            username: '',
-            password: ''
-        }
-    });
-    const [isCallRequest, setIsCallRequest] = useState(false);
-    const [response, setResponse] = useState([]);
-    const [hasError, setErrors] = useState(false);
-    useEffect(() => {
-        if (isCallRequest) {
-            async function fetchData() {
-                const res = await fetch("https://api.publicapis.org/entries");
-                res
-                    .json()
-                    .then(res => setResponse(res))
-                    .catch(err => setErrors(err));
-            }
-
-            fetchData();
-            setIsCallRequest(false);
-        }
-    }, [isCallRequest]);
-
-    const onLoginHandler = (event) => {
-        event.preventDefault();
-        setIsCallRequest(true);
-        console.log(user);
-    }
-
-    const handleChange = (e) => {
-        setUser({
-            ...user,
-            [e.target.name]: e.target.value.trim()
+  //Call API
+  useEffect(() => {
+    if (isCallRequest) {
+      async function fetchData() {
+        const res = await fetch(LOGIN_API, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          //credentials: "include",
+          method: "POST",
+          body: JSON.stringify({
+            username: user.username,
+            password: user.password,
+          }),
         });
-    };
 
-    const style = {
-        padding: '10px'
+        res
+          .json()
+          .then((response) => setResponse(response))
+          .catch((err) => setErrors(err));
+      }
+
+      fetchData();
+      setIsCallRequest(false);
+    }
+  }, [isCallRequest]);
+
+  //Check auth and redirect
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetch(LOGIN_API, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        //credentials: "include",
+        method: "POST",
+        body: JSON.stringify({
+          username: localStorage.getItem("username"),
+          password: localStorage.getItem("password"),
+        }),
+      });
+
+      res
+        .json()
+        .then((response) => setResponse(response))
+        .catch((err) => {});
     }
 
-    return (
+    fetchData();
+    if (response !== null && response !== []) {
+      localStorage.setItem("username", response.uName);
+      localStorage.setItem("password", response.uPass);
+      setIsLogged(true);
+    }
+  }, [response]);
+
+  const onLoginHandler = (event) => {
+    event.preventDefault();
+    setIsCallRequest(true);
+  };
+
+  const handleChange = (e) => {
+    setUser({
+      ...user,
+      [e.target.name]: e.target.value.trim(),
+    });
+  };
+
+  const style = {
+    padding: "10px",
+  };
+
+  return (
+    <>
+      {isLogged ? (
+        <Redirect
+          to={{
+            pathname: "/wallet",
+            state: { user: response.uName },
+          }}
+        />
+      ) : (
         <div>
-            <h1>Home Page</h1>
-            <form style={style} method="POST" onSubmitCapture={(event) => onLoginHandler(event)}>
-                <label> Username </label>
-                <br/>
-                <input type="text" name="username" onChange={(e) => handleChange(e)}/>
-                <br/>
-                <label> Password </label>
-                <br/>
-                <input type="password" name="password" onChange={(e) => handleChange(e)}/>
-                <br/>
-                <button>Login</button>
-            </form>
-            <LoginSuccess response={response}/>
-            <div>
-                <hr/>
-                <span>Has error: {JSON.stringify(response)}</span>
-
-                <hr/>
-                <span>Has error: {JSON.stringify(hasError)}</span>
-            </div>
+          <h1>Home Page</h1>
+          <form
+            style={style}
+            method="POST"
+            onSubmit={(event) => onLoginHandler(event)}
+          >
+            <label> Username </label>
+            <br />
+            <input
+              type="text"
+              name="username"
+              onChange={(e) => handleChange(e)}
+            />
+            <br />
+            <label> Password </label>
+            <br />
+            <input
+              type="password"
+              name="password"
+              onChange={(e) => handleChange(e)}
+            />
+            <br />
+            <br />
+            <button type="submit">Login</button>
+          </form>
+          <LoginSuccess hasError={hasError} />
         </div>
-    )
-}
+      )}
+    </>
+  );
+};
 
-const LoginSuccess = (response) => {
-
-    const red = {
-        color: "red"
-    }
-
-    if (response == null || response == []) {
-        return <div style={red}>Fail check your Password</div>
-    }
-    return null;
-}
+//Error mess
+const LoginSuccess = (props) => {
+  const red = {
+    color: "red",
+    padding: "10px",
+  };
+  if (props.hasError) {
+    return <div style={red}>Fail, check your username and password</div>;
+  }
+  return null;
+};
 
 export default Home;
