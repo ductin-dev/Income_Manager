@@ -3,7 +3,6 @@ import { Redirect } from "react-router-dom";
 
 const URI = "http://localhost:8080/";
 const LOGIN_API = URI + "api/login";
-const AUTH_CHECK_API = URI + "api/checklogin";
 
 const Home = (props) => {
   const [user, setUser] = useState({
@@ -96,7 +95,7 @@ const Home = (props) => {
       {isLogged ? (
         <Redirect
           to={{
-            pathname: "/wallet",
+            pathname: "/wallets",
             state: { user: response.uName },
           }}
         />
