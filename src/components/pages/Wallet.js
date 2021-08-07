@@ -7,17 +7,18 @@ const GET_WALLET_API = URI + "api/wallet/show/all";
 const columns = [
   {
     name: "Id",
-    selector: "id",
     sortable: true,
     cell: (row) => (
       <div>
-        <div style={{ fontWeight: 700 }}>{row.id}</div>
+        <div style={{ fontWeight: 700, color: "darkorange" }}>
+          Monthly renew date: {row.perior}
+        </div>
+        id: {row.id}
       </div>
     ),
   },
   {
     name: "TOTAL",
-    selector: "actualData",
     sortable: true,
     right: true,
     cell: (row) => (
@@ -28,7 +29,6 @@ const columns = [
   },
   {
     name: "Target used / month",
-    selector: "targetData",
     sortable: true,
     right: true,
     cell: (row) => (
@@ -37,7 +37,6 @@ const columns = [
   },
   {
     name: "Accident / month",
-    selector: "targetData",
     sortable: true,
     right: true,
     cell: (row) => (
@@ -48,7 +47,6 @@ const columns = [
   },
   {
     name: "Save / month",
-    selector: "targetData",
     sortable: true,
     right: true,
     cell: (row) => (
@@ -57,7 +55,6 @@ const columns = [
   },
   {
     name: "Income / month",
-    selector: "targetData",
     sortable: true,
     right: true,
     cell: (row) => (
@@ -67,7 +64,7 @@ const columns = [
 ];
 
 const Wallet = (props) => {
-  const [user, setUser] = useState(props.location.state?.user);
+  const [user] = useState(props.location.state?.user);
   const [isLogged, setIsLogged] = useState(true);
   const [wallets, setWallets] = useState();
   const [choosenWallet, setChoosenWallet] = useState(null);

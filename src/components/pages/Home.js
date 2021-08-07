@@ -42,7 +42,7 @@ const Home = (props) => {
       fetchData();
       setIsCallRequest(false);
     }
-  }, [isCallRequest]);
+  }, [isCallRequest, user]);
 
   //Check auth and redirect
   useEffect(() => {

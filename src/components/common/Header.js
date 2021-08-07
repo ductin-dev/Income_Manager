@@ -1,13 +1,8 @@
 import React, { Component } from "react";
-import { NavLink, Redirect } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 class Header extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   clearLogin = () => {
-    console.log("cleared");
     localStorage.clear();
   };
 
