@@ -1,8 +1,6 @@
 # Todo
 
-- Fix Date when add transaction
 - Realtime data when add/delete
-- Display history properly for each month
 
 # Remain Issuse
 
@@ -19,6 +17,7 @@
 
 # Ver History
 
+- 2.110821 : Done Transaction
 - 2.060821 : Dev Transaction
 - 1.020821 : Done Login
 - 1.0.0 : First

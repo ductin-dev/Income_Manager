@@ -8,11 +8,14 @@ import styles from "../module/ProgressBar.module.css";
 
 const URI = "http://localhost:8080/";
 const GET_EACH_WALLET_API = URI + "api/wallet/show/";
+const GET_CURRENT_PERIOR_API = URI + "api/wallet/show/currentvalue/";
+const GET_WALLET_HISTORY = URI + "api/wallet/show/history/";
 
 const GET_TRANSACTION_API = URI + "api/wallet/show/transaction/";
 const ADD_TRANSACTION_API = URI + "api/transaction/add";
 const DELETE_TRANSACTION_API = URI + "api/transaction/delete";
 
+//Current value table
 const current_month_columns = [
   {
     name: "Total",
@@ -53,6 +56,54 @@ const current_month_columns = [
     ),
   },
 ];
+//History table
+const history_columns = [
+  {
+    name: "Total",
+    sortable: true,
+    right: true,
+    cell: (row) => <div>{row.totalWallet}</div>,
+  },
+  {
+    name: "Used of month",
+    sortable: true,
+    right: true,
+    cell: (row) => (
+      <div style={{ fontWeight: 800, color: "red" }}>{row.percentUsed}</div>
+    ),
+  },
+  {
+    name: "Income",
+    sortable: true,
+    right: true,
+    cell: (row) => (
+      <div style={{ fontWeight: 800, color: "green" }}>{row.income}</div>
+    ),
+  },
+  {
+    name: "Percent Save",
+    sortable: true,
+    right: true,
+    cell: (row) => (
+      <div style={{ fontWeight: 800, color: "blue" }}>
+        {Math.round(row.percentSave * 100) / 100 + " %"}
+      </div>
+    ),
+  },
+  {
+    name: "Perior Start",
+    sortable: true,
+    right: true,
+    cell: (row) => <div style={{ fontWeight: 800 }}>{row.periorStart}</div>,
+  },
+  {
+    name: "Perior End",
+    sortable: true,
+    right: true,
+    cell: (row) => <div style={{ fontWeight: 800 }}>{row.periorEnd}</div>,
+  },
+];
+//Transaction Table
 const columns = [
   {
     name: "Id",
@@ -68,6 +119,12 @@ const columns = [
     sortable: true,
     right: true,
     cell: (row) => <div>{row.date}</div>,
+  },
+  {
+    name: "Perior",
+    sortable: true,
+    right: true,
+    cell: (row) => <div>{row.perior}</div>,
   },
   {
     name: "Reason",
@@ -181,6 +238,7 @@ const Transaction = (props) => {
 
   const [wallet, setWallet] = useState();
   const [transactions, setTransactions] = useState();
+  const [walletHistory, setWalletHistory] = useState();
   const [choosenWallet] = useState(props.location.state?.choosenWallet);
 
   const [periorProgress, setPeriorProgress] = useState(0);
@@ -189,6 +247,7 @@ const Transaction = (props) => {
     used: 0,
     accident: 0,
     income: 0,
+    save: 0,
   });
 
   //Logged
@@ -245,40 +304,70 @@ const Transaction = (props) => {
     }
   }, [isLogged, choosenWallet]);
 
-  const rowClickedHandler = (e) => {};
-
-  //Get progress data
+  //Get history data
   useEffect(() => {
-    let periorDay = wallet?.perior; //19
-    let currentMonth = new Date().getMonth(); //+1
-    let currentYear = new Date().getFullYear();
-    let currentDay = new Date().getDay(); //+1
-    //console.log(currentYear + "|" + currentMonth + "|" + currentDay);
+    if (isLogged) {
+      async function fetchData() {
+        const res = await fetch(GET_WALLET_HISTORY + choosenWallet, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          //credentials: "include",
+          method: "POST",
+          body: JSON.stringify({
+            username: localStorage.getItem("username"),
+            password: localStorage.getItem("password"),
+          }),
+        });
 
-    let periorStart =
-      currentDay + 1 < periorDay
-        ? new Date(currentYear, currentMonth - 1, periorDay, 0, 0)
-        : new Date(currentYear, currentMonth, periorDay, 0, 0); // 9:00 AM
-    let periorEnd =
-      currentDay + 1 < periorDay
-        ? new Date(currentYear, currentMonth, periorDay - 1, 0, 0)
-        : new Date(currentYear, currentMonth + 1, periorDay - 1, 0, 0); // 5:00 PM
-    let periorCurrent = new Date(currentYear, currentMonth, currentDay, 0, 0); // 5:00 PM
+        res
+          .json()
+          .then((response) => setWalletHistory(response))
+          .catch((err) => {});
+      }
 
-    let totalDiff = periorEnd - periorStart;
-    let currentDiff = periorEnd - periorCurrent;
-    //console.log(totalDiff + "|" + currentDiff);
-    setPeriorProgress(100 - (currentDiff / totalDiff) * 100);
+      fetchData();
+    }
+  }, [isLogged, choosenWallet]);
 
-    let start =
-      periorStart.toLocaleDateString() +
-      " " +
-      Intl.DateTimeFormat().resolvedOptions().timeZone;
-    let end =
-      periorEnd.toLocaleDateString() +
-      " " +
-      Intl.DateTimeFormat().resolvedOptions().timeZone;
-    setTitleProgress("Current perior: " + start + " - " + end);
+  //Get current perior
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetch(GET_CURRENT_PERIOR_API + choosenWallet, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        //credentials: "include",
+        method: "POST",
+        body: JSON.stringify({
+          username: localStorage.getItem("username"),
+          password: localStorage.getItem("password"),
+        }),
+      });
+
+      res
+        .json()
+        .then((response) => {
+          setPeriorProgress(response.progress);
+          setTitleProgress(
+            "Current perior: " +
+              response.periorStart +
+              " - " +
+              response.periorEnd
+          );
+          setTotalUsed({
+            used: response.used,
+            accident: response.accident,
+            income: response.income,
+            save: response.predictSave,
+          });
+        })
+        .catch((err) => {});
+    }
+
+    fetchData();
   }, [wallet?.perior]);
 
   //New transaction
@@ -297,7 +386,7 @@ const Transaction = (props) => {
           '<select class="form-control" id="transaction_add_type">' +
           " <option value='1'>1 - Normal Used (-)</option>" +
           " <option value='2'>2 - Accidental Reason (-)</option>" +
-          " <option value='3'>3 - Income (+)</option>" +
+          " <option value='4'>3 - Income (+)</option>" +
           " </select>" +
           "</div>" +
           '<div class="form-group">' +
@@ -337,6 +426,7 @@ const Transaction = (props) => {
             type: typedData.type,
             amount: typedData.amount,
             date: typedData.date,
+            perior: wallet?.perior,
           }),
         });
 
@@ -364,6 +454,8 @@ const Transaction = (props) => {
     newTransaction();
   };
 
+  //Row clicked
+  const rowClickedHandler = (e) => {};
   return (
     <>
       {isLogged ? (
@@ -392,14 +484,16 @@ const Transaction = (props) => {
                 remain: wallet?.targetData.split("|")[0] - totalUsed.used,
                 accident:
                   totalUsed.accident + " / " + wallet?.targetData.split("|")[1],
-                save:
-                  totalUsed.income -
-                  totalUsed.used -
-                  totalUsed.accident +
-                  " / " +
-                  wallet?.targetData.split("|")[2],
+                save: totalUsed.save + " / " + wallet?.targetData.split("|")[2],
               },
             ]}
+            onRowClicked={(e) => rowClickedHandler(e)}
+          />
+
+          <DataTable
+            title="History"
+            columns={history_columns}
+            data={walletHistory}
             onRowClicked={(e) => rowClickedHandler(e)}
           />
 
