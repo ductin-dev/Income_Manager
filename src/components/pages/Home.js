@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 
-const URI = "http://localhost:8080/";
+//const URI = "http://localhost:8080/";
+const URI = "https://www.satdevelop.com/";
+
 const LOGIN_API = URI + "api/login";
 
 const Home = (props) => {

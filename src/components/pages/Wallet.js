@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { Redirect } from "react-router-dom";
 
-const URI = "http://localhost:8080/";
+//const URI = "http://localhost:8080/";
+const URI = "https://www.satdevelop.com/";
+
 const GET_WALLET_API = URI + "api/wallet/show/all";
 const columns = [
   {

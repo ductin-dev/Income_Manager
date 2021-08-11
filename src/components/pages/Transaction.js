@@ -6,7 +6,9 @@ import Swal from "sweetalert2";
 
 import styles from "../module/ProgressBar.module.css";
 
-const URI = "http://localhost:8080/";
+//const URI = "http://localhost:8080/";
+const URI = "https://www.satdevelop.com/";
+
 const GET_EACH_WALLET_API = URI + "api/wallet/show/";
 const GET_CURRENT_PERIOR_API = URI + "api/wallet/show/currentvalue/";
 const GET_WALLET_HISTORY = URI + "api/wallet/show/history/";
