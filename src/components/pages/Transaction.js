@@ -5,9 +5,9 @@ import DataTable from "react-data-table-component";
 import Swal from "sweetalert2";
 
 import styles from "../module/ProgressBar.module.css";
+import Constant from "../common/DomainConstant";
 
-//const URI = "http://localhost:8080/";
-const URI = "https://www.satdevelop.com/";
+const URI = Constant;
 
 const GET_EACH_WALLET_API = URI + "api/wallet/show/";
 const GET_CURRENT_PERIOR_API = URI + "api/wallet/show/currentvalue/";
@@ -458,6 +458,8 @@ const Transaction = (props) => {
 
   //Row clicked
   const rowClickedHandler = (e) => {};
+
+  //Render
   return (
     <>
       {isLogged ? (
