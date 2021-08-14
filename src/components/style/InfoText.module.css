@@ -1,0 +1,9 @@
+.display_text {
+  padding: 5px 8px 5px 8px;
+  border-radius: 5px;
+  color: white;
+  font-weight: 700;
+  background-color: darkorange;
+  width: fit-content;
+  display: inline-block;
+}

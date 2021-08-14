@@ -3,9 +3,14 @@ import { Redirect } from "react-router-dom";
 
 import DataTable from "react-data-table-component";
 import Swal from "sweetalert2";
+import { readableTime } from "../../../services/DateTimeServices";
 
-import styles from "../module/ProgressBar.module.css";
-import Constant from "../common/DomainConstant";
+import textstyles from "../../style/InfoText.module.css";
+
+import Greetings from "./part/Greetings";
+
+import Constant from "../../common/DomainConstant";
+import WalletDetails from "./part/WalletDetails";
 
 const URI = Constant;
 
@@ -20,13 +25,13 @@ const DELETE_TRANSACTION_API = URI + "api/transaction/delete";
 //Current value table
 const current_month_columns = [
   {
-    name: "Total",
+    name: <span style={{ fontWeight: 700 }}>Actual Total</span>,
     sortable: true,
     right: true,
     cell: (row) => <div>{row.total}</div>,
   },
   {
-    name: "Used of month",
+    name: "Used / Target",
     sortable: true,
     right: true,
     cell: (row) => (
@@ -34,7 +39,7 @@ const current_month_columns = [
     ),
   },
   {
-    name: "Remain of use",
+    name: "Avaliable can use (your target)",
     sortable: true,
     right: true,
     cell: (row) => (
@@ -42,7 +47,7 @@ const current_month_columns = [
     ),
   },
   {
-    name: "Accident",
+    name: "Accident / Target",
     sortable: true,
     right: true,
     cell: (row) => (
@@ -50,7 +55,7 @@ const current_month_columns = [
     ),
   },
   {
-    name: "Predict save",
+    name: "Predict save / Target",
     sortable: true,
     right: true,
     cell: (row) => (
@@ -58,13 +63,55 @@ const current_month_columns = [
     ),
   },
 ];
+
 //History table
 const history_columns = [
   {
-    name: "Total",
+    name: "",
     sortable: true,
     right: true,
-    cell: (row) => <div>{row.totalWallet}</div>,
+    cell: (row) => (
+      <div>
+        {
+          {
+            "-1": (
+              <span
+                className={textstyles.display_text}
+                style={{ backgroundColor: "forestgreen" }}
+              >
+                Perior Ended
+              </span>
+            ),
+
+            0: <span className={textstyles.display_text}>Active !</span>,
+
+            1: (
+              <span
+                className={textstyles.display_text}
+                style={{ backgroundColor: "darkgray" }}
+              >
+                Future
+              </span>
+            ),
+          }[row.status]
+        }
+      </div>
+    ),
+  },
+  {
+    name: <span style={{ fontWeight: 700 }}>Actual Total (Each month)</span>,
+    sortable: true,
+    right: true,
+    cell: (row) => (
+      <div>
+        <span
+          className={textstyles.display_text}
+          style={{ backgroundColor: "blue" }}
+        >
+          {row.totalWallet}
+        </span>
+      </div>
+    ),
   },
   {
     name: "Used of month",
@@ -96,150 +143,28 @@ const history_columns = [
     name: "Perior Start",
     sortable: true,
     right: true,
-    cell: (row) => <div style={{ fontWeight: 800 }}>{row.periorStart}</div>,
+    cell: (row) => (
+      <div style={{ fontWeight: 800 }}>{readableTime(row.periorStart)}</div>
+    ),
   },
   {
     name: "Perior End",
     sortable: true,
     right: true,
-    cell: (row) => <div style={{ fontWeight: 800 }}>{row.periorEnd}</div>,
-  },
-];
-//Transaction Table
-const columns = [
-  {
-    name: "Id",
-    sortable: true,
     cell: (row) => (
-      <div>
-        <div style={{ fontWeight: 700 }}>{row.id}</div>
-      </div>
-    ),
-  },
-  {
-    name: "Date",
-    sortable: true,
-    right: true,
-    cell: (row) => <div>{row.date}</div>,
-  },
-  {
-    name: "Perior",
-    sortable: true,
-    right: true,
-    cell: (row) => <div>{row.perior}</div>,
-  },
-  {
-    name: "Reason",
-    sortable: true,
-    right: true,
-    cell: (row) => <div>{row.title}</div>,
-  },
-  {
-    name: "Amount of Transaction",
-    sortable: true,
-    right: true,
-    cell: (row) => <div style={{ fontWeight: 800 }}>{row.amount}</div>,
-  },
-  {
-    name: "TYPE",
-    sortable: true,
-    right: true,
-    cell: (row) =>
-      row.type === 1 ? (
-        <div style={{ fontWeight: 800, color: "darkorange" }}>USE</div>
-      ) : row.type === 2 ? (
-        <div style={{ fontWeight: 800, color: "red" }}>ACCIDENT</div>
-      ) : row.type === 3 ? (
-        <div style={{ fontWeight: 800, color: "blue" }}>SAVE</div>
-      ) : (
-        <div style={{ fontWeight: 800, color: "green" }}>INCOME</div>
-      ),
-  },
-  {
-    name: "Action",
-    sortable: false,
-    right: true,
-    cell: (row) => (
-      <div>
-        <button className="btn btn-primary m-1">View</button>
-        <button
-          className="btn btn-danger m-1"
-          onClick={() => handleDeleteTransaction(row.id)}
-        >
-          Delete
-        </button>
-      </div>
+      <div style={{ fontWeight: 800 }}>{readableTime(row.periorEnd)}</div>
     ),
   },
 ];
-
-//Delete transaction
-const handleDeleteTransaction = (e) => {
-  const deleteTransaction = async () => {
-    await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        fetchData();
-        Swal.fire("Deleted!", "Your transaction has been deleted.", "success");
-      }
-    });
-
-    async function fetchData() {
-      const res = await fetch(DELETE_TRANSACTION_API, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        //credentials: "include",
-        method: "POST",
-        body: JSON.stringify({
-          username: localStorage.getItem("username"),
-          password: localStorage.getItem("password"),
-          transactionId: e,
-        }),
-      });
-
-      res
-        .json()
-        .then((response) => {})
-        .catch((err) => {});
-    }
-  };
-  deleteTransaction();
-};
-
-const customSort = (rows, selector, direction) => {
-  return rows.sort((rowA, rowB) => {
-    // use the selector function to resolve your field names by passing the sort comparitors
-
-    const aField = selector(rowA.innerText);
-    const bField = selector(rowB.innerText);
-
-    let comparison = 0;
-
-    if (aField > bField) {
-      comparison = 1;
-    } else if (aField < bField) {
-      comparison = -1;
-    }
-
-    return direction === "desc" ? comparison * -1 : comparison;
-  });
-};
 
 const Transaction = (props) => {
   const [user] = useState(props.location.state?.user);
   const [isLogged, setIsLogged] = useState(true);
 
-  const [wallet, setWallet] = useState();
   const [transactions, setTransactions] = useState();
+  const [transactionsUpdated, setTransactionsUpdated] = useState(false);
+
+  const [wallet, setWallet] = useState();
   const [walletHistory, setWalletHistory] = useState();
   const [choosenWallet] = useState(props.location.state?.choosenWallet);
 
@@ -251,6 +176,102 @@ const Transaction = (props) => {
     income: 0,
     save: 0,
   });
+
+  const phaseDate1 = (date) => {
+    if (!date) return "Loading...";
+    let tmp = date.split("-");
+    return tmp[2] + "-" + tmp[1] + "-" + tmp[0];
+  };
+  const phaseDate2 = (perior) => {
+    if (!perior) return "Loading...";
+    let tmp = perior.split(" to ");
+    return readableTime(tmp[0]) + " to " + readableTime(tmp[1]);
+  };
+  const phaseDate3 = (perior) => {
+    if (!perior) return "Loading...";
+    let tmp = perior.split(" - ");
+    return readableTime(tmp[0]) + " to " + readableTime(tmp[1]);
+  };
+
+  //Transaction Table
+  const columns = [
+    {
+      name: "Id",
+      sortable: true,
+      cell: (row) => (
+        <div>
+          <div style={{ fontWeight: 700 }}>{row.id}</div>
+          {phaseDate2(row.perior) === titleProgress ? (
+            <span style={{ fontWeight: 600, color: "darkorange" }}>
+              In-perior
+            </span>
+          ) : (
+            ""
+          )}
+        </div>
+      ),
+    },
+    {
+      name: "Date",
+      sortable: true,
+      right: true,
+      cell: (row) => <div>{phaseDate1(row.date)}</div>,
+    },
+    {
+      name: "Perior",
+      sortable: true,
+      right: true,
+      cell: (row) => <div>{phaseDate2(row.perior)}</div>,
+    },
+    {
+      name: "Reason",
+      sortable: true,
+      right: true,
+      cell: (row) => <div>{row.title}</div>,
+    },
+    {
+      name: "Amount of Transaction",
+      sortable: true,
+      right: true,
+      cell: (row) => <div style={{ fontWeight: 800 }}>{row.amount}</div>,
+    },
+    {
+      name: "TYPE",
+      sortable: true,
+      right: true,
+      cell: (row) =>
+        row.type === 1 ? (
+          <div style={{ fontWeight: 800, color: "darkorange" }}>USE</div>
+        ) : row.type === 2 ? (
+          <div style={{ fontWeight: 800, color: "red" }}>ACCIDENT</div>
+        ) : row.type === 3 ? (
+          <div style={{ fontWeight: 800, color: "blue" }}>SAVE</div>
+        ) : (
+          <div style={{ fontWeight: 800, color: "green" }}>INCOME</div>
+        ),
+    },
+    {
+      name: "Action",
+      sortable: false,
+      right: true,
+      cell: (row) => (
+        <div>
+          <button
+            className="btn btn-primary m-1"
+            onClick={() => handleViewTransaction(row.id)}
+          >
+            View
+          </button>
+          <button
+            className="btn btn-danger m-1"
+            onClick={() => handleDeleteTransaction(row.id)}
+          >
+            Delete
+          </button>
+        </div>
+      ),
+    },
+  ];
 
   //Logged
   useEffect(() => {
@@ -303,8 +324,11 @@ const Transaction = (props) => {
 
       fetchData1();
       fetchData2();
+      return function cleanup() {
+        setTransactionsUpdated(false);
+      };
     }
-  }, [isLogged, choosenWallet]);
+  }, [transactionsUpdated, isLogged, choosenWallet, walletHistory]);
 
   //Get history data
   useEffect(() => {
@@ -330,8 +354,11 @@ const Transaction = (props) => {
       }
 
       fetchData();
+      return function cleanup() {
+        setTransactionsUpdated(false);
+      };
     }
-  }, [isLogged, choosenWallet]);
+  }, [transactionsUpdated, isLogged, choosenWallet]);
 
   //Get current perior
   useEffect(() => {
@@ -354,10 +381,7 @@ const Transaction = (props) => {
         .then((response) => {
           setPeriorProgress(response.progress);
           setTitleProgress(
-            "Current perior: " +
-              response.periorStart +
-              " - " +
-              response.periorEnd
+            phaseDate3(response.periorStart + " - " + response.periorEnd)
           );
           setTotalUsed({
             used: response.used,
@@ -370,7 +394,10 @@ const Transaction = (props) => {
     }
 
     fetchData();
-  }, [wallet?.perior]);
+    return function cleanup() {
+      setTransactionsUpdated(false);
+    };
+  }, [transactionsUpdated, wallet?.perior, choosenWallet]);
 
   //New transaction
   const handleNewTransaction = () => {
@@ -410,10 +437,11 @@ const Transaction = (props) => {
           date: document.getElementById("transaction_add_date").value,
         }),
       });
+
       let typedData = (swal && swal.value) || swal.dismiss;
 
       async function fetchData() {
-        const res = await fetch(ADD_TRANSACTION_API, {
+        await fetch(ADD_TRANSACTION_API, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -430,13 +458,12 @@ const Transaction = (props) => {
             date: typedData.date,
             perior: wallet?.perior,
           }),
-        });
-
-        res
-          .json()
+        })
+          .then((response) => response.json())
           .then((response) => {
+            setTransactionsUpdated(true);
             Swal.fire({
-              title: response,
+              title: response.result,
               width: 600,
               padding: "3em",
               background:
@@ -451,35 +478,87 @@ const Transaction = (props) => {
           })
           .catch((err) => {});
       }
-      fetchData();
+      if (swal.isConfirmed) fetchData();
     };
     newTransaction();
   };
 
-  //Row clicked
-  const rowClickedHandler = (e) => {};
+  //Delete transaction
+  const handleDeleteTransaction = (id) => {
+    const deleteTransaction = async () => {
+      await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetchData();
+        }
+      });
+
+      async function fetchData() {
+        await fetch(DELETE_TRANSACTION_API, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          //credentials: "include",
+          method: "POST",
+          body: JSON.stringify({
+            username: localStorage.getItem("username"),
+            password: localStorage.getItem("password"),
+            transactionId: id,
+          }),
+        })
+          .then((response) => response.json())
+          .then((response) => {
+            setTransactionsUpdated(true);
+            Swal.fire({
+              title: response.result,
+              width: 600,
+              padding: "3em",
+              background:
+                '#fff url("https://sweetalert2.github.io/images/trees.png")',
+              backdrop: `
+              rgba(0,0,123,0.4)
+              url("https://sweetalert2.github.io/images/nyan-cat.gif")
+              left top
+              no-repeat
+            `,
+            });
+          })
+          .catch((err) => {});
+      }
+    };
+    deleteTransaction();
+  };
+
+  //View details transaction
+  const handleViewTransaction = (e) => {};
 
   //Render
   return (
     <>
       {isLogged ? (
         <div>
-          <h1>
-            Welcome {user}, here your transaction of{" "}
-            <span style={{ color: "darkcyan" }}>Wallet {choosenWallet}</span>,
-            <a href="/wallets"> BACK</a>
-          </h1>
-          <div className={styles.progress}>
-            <div
-              className={styles.progress_done}
-              style={{ width: periorProgress + "%" }}
-            >
-              {Math.round(periorProgress)} %
-            </div>
-          </div>
+          <Greetings
+            user={user}
+            wallet={wallet}
+            choosenWallet={choosenWallet}
+          />
+          <WalletDetails
+            wallet={wallet}
+            titleProgress={titleProgress}
+            periorProgress={periorProgress}
+            user={user}
+          />
 
           <DataTable
-            title={titleProgress}
+            title="Current Month (Perior)"
             columns={current_month_columns}
             data={[
               {
@@ -491,43 +570,52 @@ const Transaction = (props) => {
                 save: totalUsed.save + " / " + wallet?.targetData.split("|")[2],
               },
             ]}
-            onRowClicked={(e) => rowClickedHandler(e)}
           />
 
-          <DataTable
-            title="History"
-            columns={history_columns}
-            data={walletHistory}
-            onRowClicked={(e) => rowClickedHandler(e)}
-          />
+          <section id="history-section">
+            <DataTable
+              pagination="true"
+              paginationPerPage={4}
+              paginationRowsPerPageOptions={[4, 10, 30, 100]}
+              title={
+                <h2 style={{ float: "left", width: "fit-content" }}>History</h2>
+              }
+              columns={history_columns}
+              data={walletHistory}
+            />
+          </section>
 
-          <DataTable
-            sortFunction={customSort}
-            title={
-              <div className="row">
-                <h2 style={{ float: "left", width: "fit-content" }}>
-                  Transactions
-                </h2>
-                <div
-                  style={{
-                    float: "right",
-                    width: "fit-content",
-                    marginRight: 15,
-                  }}
-                >
-                  <button
-                    className="btn btn-primary"
-                    onClick={(e) => handleNewTransaction()}
+          <section id="transaction-section">
+            <DataTable
+              pagination="true"
+              paginationPerPage={10}
+              paginationRowsPerPageOptions={[10, 50, 100, 500]}
+              title={
+                <div className="row">
+                  <h2 style={{ float: "left", width: "fit-content" }}>
+                    Transactions
+                  </h2>
+                  <div
+                    style={{
+                      float: "right",
+                      width: "fit-content",
+                      marginRight: 15,
+                    }}
                   >
-                    New transaction
-                  </button>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => handleNewTransaction()}
+                    >
+                      New transaction
+                    </button>
+                  </div>
                 </div>
-              </div>
-            }
-            columns={columns}
-            data={transactions}
-            onRowClicked={(e) => rowClickedHandler(e)}
-          />
+              }
+              columns={columns}
+              data={transactions}
+              onRowClicked={(e) => handleViewTransaction(e)}
+            />
+          </section>
         </div>
       ) : (
         <Redirect to="/" />
