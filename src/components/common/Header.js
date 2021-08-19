@@ -34,42 +34,38 @@ class Header extends Component {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav mr-auto">
               <li className="nav-item active">
-                <a className="nav-link" href="/#">
-                  {" "}
-                  <NavLink
-                    exact
-                    activeStyle={{
-                      backgroundColor: "white",
-                      color: "darkorange",
-                    }}
-                    to="/"
-                    className="my-link"
-                  >
-                    Home
-                  </NavLink>
-                </a>
+                <NavLink
+                  exact
+                  activeStyle={{
+                    backgroundColor: "white",
+                    color: "darkorange",
+                  }}
+                  to="/"
+                  className="nav-link"
+                >
+                  Home
+                </NavLink>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="/#">
-                  {" "}
-                  <NavLink
-                    exact
-                    activeStyle={{
-                      backgroundColor: "white",
-                      color: "darkorange",
-                    }}
-                    to="/about"
-                    className="my-link"
-                  >
-                    Information
-                  </NavLink>
-                </a>
+                <NavLink
+                  activeStyle={{
+                    backgroundColor: "white",
+                    color: "darkorange",
+                  }}
+                  to="/about"
+                  className="nav-link"
+                >
+                  Information
+                </NavLink>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="/#" onClick={this.clearLogin}>
-                  {" "}
-                  <NavLink to="/">Logout</NavLink>
-                </a>
+                <NavLink
+                  to="/"
+                  className="nav-link"
+                  onClick={this.clearLogin()}
+                >
+                  Logout
+                </NavLink>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="/#">

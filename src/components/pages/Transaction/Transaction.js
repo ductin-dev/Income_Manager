@@ -26,13 +26,13 @@ const DELETE_TRANSACTION_API = URI + "api/transaction/delete";
 const current_month_columns = [
   {
     name: <span style={{ fontWeight: 700 }}>Actual Total</span>,
-    sortable: true,
+    sortable: false,
     right: true,
     cell: (row) => <div>{row.total}</div>,
   },
   {
     name: "Used / Target",
-    sortable: true,
+    sortable: false,
     right: true,
     cell: (row) => (
       <div style={{ fontWeight: 800, color: "red" }}>{row.used}</div>
@@ -40,7 +40,7 @@ const current_month_columns = [
   },
   {
     name: "Avaliable can use (your target)",
-    sortable: true,
+    sortable: false,
     right: true,
     cell: (row) => (
       <div style={{ fontWeight: 800, color: "blue" }}>{row.remain}</div>
@@ -48,7 +48,7 @@ const current_month_columns = [
   },
   {
     name: "Accident / Target",
-    sortable: true,
+    sortable: false,
     right: true,
     cell: (row) => (
       <div style={{ fontWeight: 800, color: "blue" }}>{row.accident}</div>
@@ -56,7 +56,7 @@ const current_month_columns = [
   },
   {
     name: "Predict save / Target",
-    sortable: true,
+    sortable: false,
     right: true,
     cell: (row) => (
       <div style={{ fontWeight: 800, color: "green" }}>{row.save}</div>
@@ -68,7 +68,7 @@ const current_month_columns = [
 const history_columns = [
   {
     name: "",
-    sortable: true,
+    sortable: false,
     right: true,
     cell: (row) => (
       <div>
@@ -100,7 +100,7 @@ const history_columns = [
   },
   {
     name: <span style={{ fontWeight: 700 }}>Actual Total (Each month)</span>,
-    sortable: true,
+    sortable: false,
     right: true,
     cell: (row) => (
       <div>
@@ -115,7 +115,7 @@ const history_columns = [
   },
   {
     name: "Used of month",
-    sortable: true,
+    sortable: false,
     right: true,
     cell: (row) => (
       <div style={{ fontWeight: 800, color: "red" }}>{row.percentUsed}</div>
@@ -123,7 +123,7 @@ const history_columns = [
   },
   {
     name: "Income",
-    sortable: true,
+    sortable: false,
     right: true,
     cell: (row) => (
       <div style={{ fontWeight: 800, color: "green" }}>{row.income}</div>
@@ -131,7 +131,7 @@ const history_columns = [
   },
   {
     name: "Percent Save",
-    sortable: true,
+    sortable: false,
     right: true,
     cell: (row) => (
       <div style={{ fontWeight: 800, color: "blue" }}>
@@ -141,7 +141,7 @@ const history_columns = [
   },
   {
     name: "Perior Start",
-    sortable: true,
+    sortable: false,
     right: true,
     cell: (row) => (
       <div style={{ fontWeight: 800 }}>{readableTime(row.periorStart)}</div>
@@ -149,7 +149,7 @@ const history_columns = [
   },
   {
     name: "Perior End",
-    sortable: true,
+    sortable: false,
     right: true,
     cell: (row) => (
       <div style={{ fontWeight: 800 }}>{readableTime(row.periorEnd)}</div>
@@ -197,7 +197,7 @@ const Transaction = (props) => {
   const columns = [
     {
       name: "Id",
-      sortable: true,
+      sortable: false,
       cell: (row) => (
         <div>
           <div style={{ fontWeight: 700 }}>{row.id}</div>
@@ -213,31 +213,31 @@ const Transaction = (props) => {
     },
     {
       name: "Date",
-      sortable: true,
+      sortable: false,
       right: true,
       cell: (row) => <div>{phaseDate1(row.date)}</div>,
     },
     {
       name: "Perior",
-      sortable: true,
+      sortable: false,
       right: true,
       cell: (row) => <div>{phaseDate2(row.perior)}</div>,
     },
     {
       name: "Reason",
-      sortable: true,
+      sortable: false,
       right: true,
       cell: (row) => <div>{row.title}</div>,
     },
     {
       name: "Amount of Transaction",
-      sortable: true,
+      sortable: false,
       right: true,
       cell: (row) => <div style={{ fontWeight: 800 }}>{row.amount}</div>,
     },
     {
       name: "TYPE",
-      sortable: true,
+      sortable: false,
       right: true,
       cell: (row) =>
         row.type === 1 ? (

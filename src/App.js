@@ -13,7 +13,7 @@ function App() {
     <>
       <Router>
         <Header />
-        <div className="container-fluid" style={{ marginTop: 90 }}>
+        <div className="container-fluid" style={{ marginTop: 80 }}>
           <Route exact path="/" component={Home} />
           <Route path="/wallets" component={Wallet} />
           <Route path="/wallet/:id" component={Transaction} />

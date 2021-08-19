@@ -14,7 +14,7 @@ const DELETE_WALLET_API = URI + "api/wallet/delete";
 
 const Wallet = (props) => {
   const [user] = useState(props.location.state?.user);
-  const [isLogged, setIsLogged] = useState(true);
+  const [isLogged, setIsLogged] = useState();
 
   const [wallets, setWallets] = useState();
   const [walletsUpdated, setWalletsUpdated] = useState(false);
@@ -213,7 +213,7 @@ const Wallet = (props) => {
   const columns = [
     {
       name: "Id",
-      sortable: true,
+      sortable: false,
       cell: (row) => (
         <div>
           <div style={{ fontWeight: 700, color: "darkorange" }}>{row.name}</div>
@@ -226,7 +226,7 @@ const Wallet = (props) => {
     },
     {
       name: "TOTAL",
-      sortable: true,
+      sortable: false,
       right: true,
       cell: (row) => (
         <div style={{ fontWeight: 800, color: "forestgreen" }}>
@@ -236,7 +236,7 @@ const Wallet = (props) => {
     },
     {
       name: "Target used / month",
-      sortable: true,
+      sortable: false,
       right: true,
       cell: (row) => (
         <div style={{ fontWeight: 800 }}>{row.targetData.split("|")[0]}</div>
@@ -244,7 +244,7 @@ const Wallet = (props) => {
     },
     {
       name: "Target Accident / month",
-      sortable: true,
+      sortable: false,
       right: true,
       cell: (row) => (
         <div style={{ fontWeight: 800, color: "red" }}>
@@ -254,7 +254,7 @@ const Wallet = (props) => {
     },
     {
       name: "Target Save / month",
-      sortable: true,
+      sortable: false,
       right: true,
       cell: (row) => (
         <div style={{ fontWeight: 800 }}>{row.targetData.split("|")[2]}</div>
@@ -262,7 +262,7 @@ const Wallet = (props) => {
     },
     {
       name: "Target Income / month",
-      sortable: true,
+      sortable: false,
       right: true,
       cell: (row) => (
         <div style={{ fontWeight: 800 }}>{row.targetData.split("|")[3]}</div>
@@ -293,7 +293,7 @@ const Wallet = (props) => {
 
   return (
     <>
-      {isLogged ? (
+      {isLogged === true ? (
         <div>
           <h1>Welcome {user}, here your Wallets</h1>
           <DataTable
@@ -323,8 +323,12 @@ const Wallet = (props) => {
             onRowClicked={(e) => handleViewWallet(e.id)}
           />
         </div>
-      ) : (
+      ) : isLogged === false ? (
         <Redirect to="/" />
+      ) : (
+        <div>
+          <h1>Loading</h1>
+        </div>
       )}
       {choosenWallet !== null ? (
         <Redirect
