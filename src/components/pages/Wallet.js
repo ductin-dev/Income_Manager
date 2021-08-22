@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Redirect } from "react-router-dom";
+import AuthContext from "../../services/Auth";
 
 import DataTable from "react-data-table-component";
 import Swal from "sweetalert2";
@@ -13,36 +14,26 @@ const ADD_WALLET_API = URI + "api/wallet/add";
 const DELETE_WALLET_API = URI + "api/wallet/delete";
 
 const Wallet = (props) => {
-  const [user] = useState(props.location.state?.user);
-  const [isLogged, setIsLogged] = useState();
-
   const [wallets, setWallets] = useState();
   const [walletsUpdated, setWalletsUpdated] = useState(false);
 
   const [choosenWallet, setChoosenWallet] = useState(null);
 
   //Auth
-  useEffect(() => {
-    setIsLogged(
-      user === null || user === [] || typeof user === "undefined" ? false : true
-    );
-  }, [user, isLogged]);
+  const authContext = useContext(AuthContext);
 
   //Get wallet list
   useEffect(() => {
-    if (isLogged) {
+    if (authContext.isLoggedIn) {
       async function fetchData() {
         const res = await fetch(GET_WALLET_API, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            JWT: authContext.token,
           },
           //credentials: "include",
           method: "POST",
-          body: JSON.stringify({
-            username: localStorage.getItem("username"),
-            password: localStorage.getItem("password"),
-          }),
         });
 
         res
@@ -56,7 +47,7 @@ const Wallet = (props) => {
         setWalletsUpdated(false);
       };
     }
-  }, [walletsUpdated, isLogged]);
+  }, [walletsUpdated, authContext]);
 
   //Add wallet
   const handleNewWallet = () => {
@@ -110,12 +101,11 @@ const Wallet = (props) => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            JWT: authContext.token,
           },
           //credentials: "include",
           method: "POST",
           body: JSON.stringify({
-            username: localStorage.getItem("username"),
-            password: localStorage.getItem("password"),
             name: typedData.name,
             used: typedData.used,
             accident: typedData.accident,
@@ -172,12 +162,11 @@ const Wallet = (props) => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            JWT: authContext.token,
           },
           //credentials: "include",
           method: "POST",
           body: JSON.stringify({
-            username: localStorage.getItem("username"),
-            password: localStorage.getItem("password"),
             walletId: id,
           }),
         })
@@ -293,9 +282,11 @@ const Wallet = (props) => {
 
   return (
     <>
-      {isLogged === true ? (
+      {authContext.isLoggedIn === true ? (
         <div>
-          <h1>Welcome {user}, here your Wallets</h1>
+          <h1>
+            Welcome {JSON.parse(authContext.authUser)?.uName}, here your Wallets
+          </h1>
           <DataTable
             title={
               <div className="row">
@@ -323,18 +314,14 @@ const Wallet = (props) => {
             onRowClicked={(e) => handleViewWallet(e.id)}
           />
         </div>
-      ) : isLogged === false ? (
-        <Redirect to="/" />
       ) : (
-        <div>
-          <h1>Loading</h1>
-        </div>
+        <Redirect to="/" />
       )}
       {choosenWallet !== null ? (
         <Redirect
           to={{
             pathname: "/wallet/" + choosenWallet,
-            state: { choosenWallet: choosenWallet, user: user },
+            state: { choosenWallet: choosenWallet },
           }}
         />
       ) : (

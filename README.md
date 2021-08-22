@@ -4,24 +4,22 @@ https://sat-income.herokuapp.com
 
 # Todo
 
+- Improve UX/UI (40%)
 - Visualize history by graph
 - Fix header nav, router
 - Add footer
-- Edit about page
 
 # Remain Issuse
 
-- Login without JWT or anti-B.F
-- Router and nav not working properly
-
 # Remain Feautures
 
-- Improve UX/UI (10%)
+- Improve UX/UI (40%)
 - Redux
-- Blogs
+- Some game
 
 # Ver History
 
+- 3.220821 : Release, First (1.0.0), Fix Auth, Work Done
 - 3.140821 : Done code (90%), pending reviewing bug
 - 2.120821 : Fix issuses
 - 2.110821 : Done Transaction

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Redirect } from "react-router-dom";
 
 import DataTable from "react-data-table-component";
@@ -11,6 +11,7 @@ import Greetings from "./part/Greetings";
 
 import Constant from "../../common/DomainConstant";
 import WalletDetails from "./part/WalletDetails";
+import AuthContext from "../../../services/Auth";
 
 const URI = Constant;
 
@@ -158,8 +159,9 @@ const history_columns = [
 ];
 
 const Transaction = (props) => {
-  const [user] = useState(props.location.state?.user);
-  const [isLogged, setIsLogged] = useState(true);
+  const authContext = useContext(AuthContext);
+
+  const [user] = useState(JSON.parse(authContext.authUser)?.uName);
 
   const [transactions, setTransactions] = useState();
   const [transactionsUpdated, setTransactionsUpdated] = useState(false);
@@ -273,28 +275,17 @@ const Transaction = (props) => {
     },
   ];
 
-  //Logged
-  useEffect(() => {
-    setIsLogged(
-      user === null || user === [] || typeof user === "undefined" ? false : true
-    );
-  }, [user, isLogged]);
-
   //Get main data
   useEffect(() => {
-    if (isLogged) {
+    if (authContext.isLoggedIn) {
       async function fetchData1() {
         const res = await fetch(GET_EACH_WALLET_API + choosenWallet, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            JWT: authContext.token,
           },
-          //credentials: "include",
           method: "POST",
-          body: JSON.stringify({
-            username: localStorage.getItem("username"),
-            password: localStorage.getItem("password"),
-          }),
         });
 
         res
@@ -307,13 +298,10 @@ const Transaction = (props) => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            JWT: authContext.token,
           },
           //credentials: "include",
           method: "POST",
-          body: JSON.stringify({
-            username: localStorage.getItem("username"),
-            password: localStorage.getItem("password"),
-          }),
         });
 
         res
@@ -328,23 +316,19 @@ const Transaction = (props) => {
         setTransactionsUpdated(false);
       };
     }
-  }, [transactionsUpdated, isLogged, choosenWallet, walletHistory]);
+  }, [transactionsUpdated, choosenWallet, walletHistory, authContext]);
 
   //Get history data
   useEffect(() => {
-    if (isLogged) {
+    if (authContext.isLoggedIn) {
       async function fetchData() {
         const res = await fetch(GET_WALLET_HISTORY + choosenWallet, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            JWT: authContext.token,
           },
-          //credentials: "include",
           method: "POST",
-          body: JSON.stringify({
-            username: localStorage.getItem("username"),
-            password: localStorage.getItem("password"),
-          }),
         });
 
         res
@@ -358,7 +342,7 @@ const Transaction = (props) => {
         setTransactionsUpdated(false);
       };
     }
-  }, [transactionsUpdated, isLogged, choosenWallet]);
+  }, [transactionsUpdated, choosenWallet, authContext]);
 
   //Get current perior
   useEffect(() => {
@@ -367,13 +351,9 @@ const Transaction = (props) => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+          JWT: authContext.token,
         },
-        //credentials: "include",
         method: "POST",
-        body: JSON.stringify({
-          username: localStorage.getItem("username"),
-          password: localStorage.getItem("password"),
-        }),
       });
 
       res
@@ -397,7 +377,7 @@ const Transaction = (props) => {
     return function cleanup() {
       setTransactionsUpdated(false);
     };
-  }, [transactionsUpdated, wallet?.perior, choosenWallet]);
+  }, [transactionsUpdated, wallet?.perior, choosenWallet, authContext]);
 
   //New transaction
   const handleNewTransaction = () => {
@@ -445,13 +425,12 @@ const Transaction = (props) => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            JWT: authContext.token,
           },
           //credentials: "include",
           method: "POST",
           body: JSON.stringify({
-            username: localStorage.getItem("username"),
-            password: localStorage.getItem("password"),
-            wallet: choosenWallet,
+            walletId: choosenWallet,
             title: typedData.title,
             type: typedData.type,
             amount: typedData.amount,
@@ -505,12 +484,11 @@ const Transaction = (props) => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            JWT: authContext.token,
           },
           //credentials: "include",
           method: "POST",
           body: JSON.stringify({
-            username: localStorage.getItem("username"),
-            password: localStorage.getItem("password"),
             transactionId: id,
           }),
         })
@@ -538,12 +516,12 @@ const Transaction = (props) => {
   };
 
   //View details transaction
-  const handleViewTransaction = (e) => {};
+  const handleViewTransaction = () => {};
 
   //Render
   return (
     <>
-      {isLogged ? (
+      {authContext.isLoggedIn ? (
         <div>
           <Greetings
             user={user}

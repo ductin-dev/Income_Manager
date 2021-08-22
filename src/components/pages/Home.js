@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Redirect } from "react-router-dom";
+import AuthContext from "../../services/Auth";
 import Constant from "../common/DomainConstant";
 
 import loginstyles from "../style/Login.module.css";
@@ -9,6 +10,8 @@ const URI = Constant;
 const LOGIN_API = URI + "api/login";
 
 const Home = () => {
+  const authContext = useContext(AuthContext);
+
   const [user, setUser] = useState({
     User: {
       username: "",
@@ -17,82 +20,40 @@ const Home = () => {
   });
   const [isCallRequest, setIsCallRequest] = useState(false);
   const [hasError, setErrors] = useState(false);
-  const [response, setResponse] = useState(null);
-  const [isLogged, setIsLogged] = useState();
 
   //const [currentFocus, setCurrentFocus] = useState(null);
 
-  //Call API
+  //Login API
   useEffect(() => {
     if (isCallRequest) {
       async function fetchData() {
-        const res = await fetch(LOGIN_API, {
+        await fetch(LOGIN_API, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
           },
-          //credentials: "include",
           method: "POST",
           body: JSON.stringify({
             username: user.username,
             password: user.password,
           }),
-        });
-
-        res
-          .json()
-          .then((response) => setResponse(response))
-          .catch((err) => setErrors(err));
+        })
+          .then((response) => response.text())
+          .then((text) => {
+            if (text.trim() === "") {
+              setErrors(true);
+            } else authContext.login(text);
+          })
+          .catch((err) => {
+            setErrors(err);
+          });
       }
-
       fetchData();
       setIsCallRequest(false);
     }
-  }, [isCallRequest, user]);
+  }, [isCallRequest, user, authContext]);
 
-  //Check auth and redirect
-  useEffect(() => {
-    async function fetchData() {
-      const res = await fetch(LOGIN_API, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        //credentials: "include",
-        method: "POST",
-        body: JSON.stringify({
-          username: localStorage.getItem("username"),
-          password: localStorage.getItem("password"),
-        }),
-      });
-
-      res
-        .json()
-        .then((response) => setResponse(response))
-        .catch((err) => {});
-    }
-
-    fetchData();
-    if (response !== null && response !== []) {
-      localStorage.setItem("username", response.uName);
-      localStorage.setItem("password", response.uPass);
-      setIsLogged(true);
-    } else setIsLogged(false);
-  }, [response]);
-
-  //Rác của đạt, fix sau
-  const onLoginHandler = (event) => {
-    event.preventDefault();
-    setIsCallRequest(true);
-  };
-  const handleChange = (e) => {
-    setUser({
-      ...user,
-      [e.target.name]: e.target.value.trim(),
-    });
-  };
-
-  //Focus handler
+  //Form handler
   const emailFocusHandler = (e) => {
     /*if (currentFocus) currentFocus.pause();
     currentFocus = anime({
@@ -141,17 +102,29 @@ const Home = () => {
       },
     });*/
   };
+  const onLoginHandler = (event) => {
+    event.preventDefault();
+    setIsCallRequest(true);
+  };
+  const handleChange = (e) => {
+    setUser({
+      ...user,
+      [e.target.name]: e.target.value.trim(),
+    });
+  };
+  const handleEnter = (e) => {
+    if (e.key === "Enter") onLoginHandler(e);
+  };
 
   return (
     <>
-      {isLogged === true ? (
+      {authContext.isLoggedIn === true ? (
         <Redirect
           to={{
             pathname: "/wallets",
-            state: { user: response.uName },
           }}
         />
-      ) : isLogged === false ? (
+      ) : (
         <>
           <div className={loginstyles.page}>
             <div className={loginstyles.container}>
@@ -180,22 +153,25 @@ const Home = () => {
                   <path d="m 40,120.00016 239.99984,-3.2e-4 c 0,0 24.99263,0.79932 25.00016,35.00016 0.008,34.20084 -25.00016,35 -25.00016,35 h -239.99984 c 0,-0.0205 -25,4.01348 -25,38.5 0,34.48652 25,38.5 25,38.5 h 215 c 0,0 20,-0.99604 20,-25 0,-24.00396 -20,-25 -20,-25 h -190 c 0,0 -20,1.71033 -20,25 0,24.00396 20,25 20,25 h 168.57143" />
                 </svg>
                 <div className={loginstyles.form}>
-                  <label for="email">Username / Email</label>
+                  <label htmlFor="email">Username / Email</label>
                   <input
                     id="email"
                     type="text"
                     name="username"
                     onChange={(e) => handleChange(e)}
                     onFocus={(e) => emailFocusHandler(e)}
+                    onKeyDown={(e) => handleEnter(e)}
                     placeholder="example@email.com"
                   />
-                  <label for="password">Password</label>
+                  <label htmlFor="password">Password</label>
                   <input
                     id="password"
                     type="password"
                     name="password"
                     onChange={(e) => handleChange(e)}
                     onFocus={(e) => passFocusHandler(e)}
+                    onKeyDown={(e) => handleEnter(e)}
+                    placeholder="********"
                   />
                   <input
                     type="submit"
@@ -204,16 +180,12 @@ const Home = () => {
                     onClick={onLoginHandler}
                     onFocus={(e) => submitFocusHandler(e)}
                   />
+                  <LoginSuccess hasError={hasError} />
                 </div>
               </div>
             </div>
           </div>
-          <LoginSuccess hasError={hasError} />
         </>
-      ) : (
-        <div>
-          <h1>Loading</h1>
-        </div>
       )}
     </>
   );
