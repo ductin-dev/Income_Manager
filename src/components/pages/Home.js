@@ -1,13 +1,19 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Redirect } from "react-router-dom";
-import AuthContext from "../../services/Auth";
+import GoogleLogin from "react-google-login";
+
 import Constant from "../common/DomainConstant";
+import AuthContext from "../../services/Auth";
 
 import loginstyles from "../style/Login.module.css";
+import { FcGoogle } from "react-icons/fc";
 
 const URI = Constant;
+const CLIENT_ID =
+  "888567468389-5h2gfmlvp5blgria6dnauldlbniloaio.apps.googleusercontent.com";
 
 const LOGIN_API = URI + "api/login";
+const LOGIN_MAIL_API = URI + "api/login/mail";
 
 const Home = () => {
   const authContext = useContext(AuthContext);
@@ -52,6 +58,13 @@ const Home = () => {
       setIsCallRequest(false);
     }
   }, [isCallRequest, user, authContext]);
+
+  //Login Mail API
+  const responseGoogle = (response) => {
+    let email = response?.profileObj.email;
+    let token = response?.tokenId;
+    if (email !== null && token !== null) onloginMailHandler(email, token);
+  };
 
   //Form handler
   const emailFocusHandler = (e) => {
@@ -102,10 +115,41 @@ const Home = () => {
       },
     });*/
   };
+
+  //Login Handler
   const onLoginHandler = (event) => {
     event.preventDefault();
     setIsCallRequest(true);
   };
+
+  //Login Mail Handler
+  const onloginMailHandler = (email, token) => {
+    async function fetchData() {
+      await fetch(LOGIN_MAIL_API, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          email: email,
+          token: token,
+        }),
+      })
+        .then((response) => response.text())
+        .then((text) => {
+          if (text.trim() === "") {
+            setErrors(true);
+          } else authContext.login(text);
+        })
+        .catch((err) => {
+          setErrors(err);
+        });
+    }
+    fetchData();
+  };
+
+  //Type Handler
   const handleChange = (e) => {
     setUser({
       ...user,
@@ -132,7 +176,36 @@ const Home = () => {
                 <div className={loginstyles.login}>Login</div>
                 <div className={loginstyles.eula}>
                   By logging in you agree to the ridiculously long terms that
-                  you didn't bother to read
+                  you didn't bother to read<br></br>
+                  <GoogleLogin
+                    clientId={CLIENT_ID}
+                    onSuccess={responseGoogle}
+                    onFailure={responseGoogle}
+                    cookiePolicy={"single_host_origin"}
+                    render={(renderProps) => (
+                      <button
+                        className="btn btn-info"
+                        onClick={renderProps.onClick}
+                        style={{
+                          color: "white",
+                          backgroundColor: "darkorange",
+                          fontWeight: 700,
+                          textAlign: "center",
+                          borderRadius: 5,
+                          marginTop: 10,
+                        }}
+                      >
+                        <FcGoogle
+                          style={{
+                            position: "inherit",
+                            width: "fit-content",
+                            stroke: "white",
+                          }}
+                        />
+                        &nbsp;Login with Google
+                      </button>
+                    )}
+                  ></GoogleLogin>
                 </div>
               </div>
               <div className={loginstyles.right}>
