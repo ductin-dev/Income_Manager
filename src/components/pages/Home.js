@@ -63,7 +63,7 @@ const Home = () => {
 
   //Login Mail API
   const responseGoogle = (response) => {
-    let email = response?.profileObj.email;
+    let email = response?.profileObj?.email;
     let token = response?.tokenId;
     if (email && token) onloginMailHandler(email, token);
   };
@@ -180,7 +180,7 @@ const Home = () => {
               <div className={loginstyles.left} style={{ height: "100%" }}>
                 <div className={loginstyles.login}>Login</div>
                 <div className={loginstyles.eula}>
-                  (*) By logging in you agree to the ridiculously long terms
+                  (1) By logging in you agree to the ridiculously long terms
                   that you didn't bother to read<br></br>
                   <GoogleLogin
                     clientId={CLIENT_ID}
