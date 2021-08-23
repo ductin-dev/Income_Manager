@@ -9,6 +9,7 @@ import Game from "./components/pages/Game";
 import Header from "./components/common/Header";
 import { AuthContextProvider } from "./services/Auth";
 import Footer from "./components/common/Footer";
+import NotFound from "./components/pages/404";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/about" component={About} />
             <Route path="/game" component={Game} />
             <Route exact path="/" component={Home} />
+            <Route component={NotFound} />
           </Switch>
         </div>
         <Footer />
