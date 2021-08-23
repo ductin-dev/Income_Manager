@@ -283,7 +283,6 @@ const Transaction = (props) => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
             JWT: authContext.token,
           },
           method: "POST",
@@ -328,7 +327,6 @@ const Transaction = (props) => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
             JWT: authContext.token,
           },
           method: "POST",
@@ -354,7 +352,6 @@ const Transaction = (props) => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
           JWT: authContext.token,
         },
         method: "POST",
@@ -429,7 +426,6 @@ const Transaction = (props) => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
             JWT: authContext.token,
           },
           //credentials: "include",
@@ -489,7 +485,6 @@ const Transaction = (props) => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
             JWT: authContext.token,
           },
           //credentials: "include",
