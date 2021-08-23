@@ -38,10 +38,7 @@ const Header = () => {
             <li className="nav-item active">
               <NavLink
                 exact
-                activeStyle={{
-                  backgroundColor: "white",
-                  color: "darkorange",
-                }}
+                activeStyle={activeStyle}
                 to="/"
                 className="nav-link"
               >
@@ -50,10 +47,7 @@ const Header = () => {
             </li>
             <li className="nav-item">
               <NavLink
-                activeStyle={{
-                  backgroundColor: "white",
-                  color: "darkorange",
-                }}
+                activeStyle={activeStyle}
                 to="/about"
                 className="nav-link"
               >
@@ -62,10 +56,7 @@ const Header = () => {
             </li>
             <li className="nav-item">
               <NavLink
-                activeStyle={{
-                  backgroundColor: "white",
-                  color: "darkorange",
-                }}
+                activeStyle={activeStyle}
                 to="/game"
                 className="nav-link"
               >
@@ -77,7 +68,11 @@ const Header = () => {
             {authContext.isLoggedIn === true ? (
               <>
                 <li className="nav-item">
-                  <NavLink to="/" className="nav-link">
+                  <NavLink
+                    to="/wallets"
+                    className="nav-link"
+                    activeStyle={activeStyle}
+                  >
                     {JSON.parse(authContext.authUser)?.uName}
                   </NavLink>
                 </li>
@@ -95,6 +90,12 @@ const Header = () => {
       </nav>
     </header>
   );
+};
+
+const activeStyle = {
+  backgroundColor: "darkorange",
+  color: "white",
+  borderRadius: 8,
 };
 
 export default Header;

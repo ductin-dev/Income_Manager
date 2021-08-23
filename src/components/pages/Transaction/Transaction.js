@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, useParams } from "react-router-dom";
 
 import DataTable from "react-data-table-component";
 import Swal from "sweetalert2";
@@ -168,7 +168,7 @@ const Transaction = (props) => {
 
   const [wallet, setWallet] = useState();
   const [walletHistory, setWalletHistory] = useState();
-  const [choosenWallet] = useState(props.location.state?.choosenWallet);
+  let { choosenWallet } = useParams();
 
   const [periorProgress, setPeriorProgress] = useState(0);
   const [titleProgress, setTitleProgress] = useState();

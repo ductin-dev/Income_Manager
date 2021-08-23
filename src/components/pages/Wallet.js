@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, Route, Switch, Link, useRouteMatch } from "react-router-dom";
 import AuthContext from "../../services/Auth";
+import Transaction from "./Transaction/Transaction";
 
 import DataTable from "react-data-table-component";
 import Swal from "sweetalert2";
@@ -14,10 +15,10 @@ const ADD_WALLET_API = URI + "api/wallet/add";
 const DELETE_WALLET_API = URI + "api/wallet/delete";
 
 const Wallet = (props) => {
+  const match = useRouteMatch();
+
   const [wallets, setWallets] = useState();
   const [walletsUpdated, setWalletsUpdated] = useState(false);
-
-  const [choosenWallet, setChoosenWallet] = useState(null);
 
   //Auth
   const authContext = useContext(AuthContext);
@@ -193,11 +194,6 @@ const Wallet = (props) => {
     deleteWallet();
   };
 
-  //View wallet
-  const handleViewWallet = (id) => {
-    setChoosenWallet(id);
-  };
-
   //Column wallet
   const columns = [
     {
@@ -263,12 +259,9 @@ const Wallet = (props) => {
       right: true,
       cell: (row) => (
         <div>
-          <button
-            className="btn btn-primary m-1"
-            onClick={() => handleViewWallet(row.id)}
-          >
+          <Link className="btn btn-primary m-1" to={`${match.url}/${row.id}`}>
             View
-          </button>
+          </Link>
           <button
             className="btn btn-danger m-1"
             onClick={() => handleDeleteWallet(row.id)}
@@ -283,49 +276,49 @@ const Wallet = (props) => {
   return (
     <>
       {authContext.isLoggedIn === true ? (
-        <div>
-          <h1>
-            Welcome {JSON.parse(authContext.authUser)?.uName}, here your Wallets
-          </h1>
-          <DataTable
-            title={
-              <div className="row">
-                <h2 style={{ float: "left", width: "fit-content" }}>
-                  Wallet List
-                </h2>
-                <div
-                  style={{
-                    float: "right",
-                    width: "fit-content",
-                    marginRight: 15,
-                  }}
-                >
-                  <button
-                    className="btn btn-primary"
-                    onClick={(e) => handleNewWallet()}
-                  >
-                    New wallet
-                  </button>
-                </div>
-              </div>
-            }
-            columns={columns}
-            data={wallets}
-            onRowClicked={(e) => handleViewWallet(e.id)}
-          />
-        </div>
+        <Switch>
+          <Route path={`${match.path}/:choosenWallet`}>
+            <Transaction />
+          </Route>
+          <Route path={match.path}>
+            <div>
+              <h1>
+                Welcome {JSON.parse(authContext.authUser)?.uName}, here your
+                Wallets
+              </h1>
+              <br></br>
+              <DataTable
+                title={
+                  <div className="row">
+                    <h2 style={{ float: "left", width: "fit-content" }}>
+                      Wallet List
+                    </h2>
+                    <div
+                      style={{
+                        float: "right",
+                        width: "fit-content",
+                        marginRight: 15,
+                      }}
+                    >
+                      <button
+                        className="btn btn-primary"
+                        onClick={(e) => handleNewWallet()}
+                      >
+                        New wallet
+                      </button>
+                    </div>
+                  </div>
+                }
+                columns={columns}
+                data={wallets}
+              />
+              <br></br>
+              <br></br>
+            </div>
+          </Route>
+        </Switch>
       ) : (
         <Redirect to="/" />
-      )}
-      {choosenWallet !== null ? (
-        <Redirect
-          to={{
-            pathname: "/wallet/" + choosenWallet,
-            state: { choosenWallet: choosenWallet },
-          }}
-        />
-      ) : (
-        <></>
       )}
     </>
   );

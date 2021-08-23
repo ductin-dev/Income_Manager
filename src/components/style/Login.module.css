@@ -8,12 +8,6 @@
 ::-moz-selection {
   background: #2d2f36;
 }
-body {
-  background: white;
-  font-family: "Inter UI", sans-serif;
-  margin: 0;
-  padding: 20px;
-}
 .page {
   background: #e2e2e5;
   display: flex;
@@ -84,11 +78,11 @@ body {
     max-height: 350px;
   }
 }
-svg {
+.svgLogin {
   position: absolute;
   width: 320px;
 }
-path {
+.pathLogin {
   fill: none;
   stroke: url(#linearGradient);
   stroke-width: 4;
@@ -98,7 +92,7 @@ path {
   margin: 40px;
   position: absolute;
 }
-label {
+.labelLogin {
   color: #c2c2c5;
   display: block;
   font-size: 14px;
@@ -106,7 +100,7 @@ label {
   margin-top: 20px;
   margin-bottom: 5px;
 }
-input {
+.inputLogin {
   background: transparent;
   border: 0;
   color: #f2f2f2;
@@ -115,9 +109,6 @@ input {
   line-height: 30px;
   outline: none !important;
   width: 100%;
-}
-input::-moz-focus-inner {
-  border: 0;
 }
 #submit {
   color: #707075;

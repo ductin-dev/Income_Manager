@@ -25,6 +25,7 @@ const Home = () => {
     },
   });
   const [isCallRequest, setIsCallRequest] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [hasError, setErrors] = useState(false);
 
   //const [currentFocus, setCurrentFocus] = useState(null);
@@ -124,6 +125,7 @@ const Home = () => {
 
   //Login Mail Handler
   const onloginMailHandler = (email, token) => {
+    setIsLoading(true);
     async function fetchData() {
       await fetch(LOGIN_MAIL_API, {
         headers: {
@@ -147,6 +149,7 @@ const Home = () => {
         });
     }
     fetchData();
+    setIsLoading(false);
   };
 
   //Type Handler
@@ -172,7 +175,7 @@ const Home = () => {
         <>
           <div className={loginstyles.page}>
             <div className={loginstyles.container}>
-              <div className={loginstyles.left}>
+              <div className={loginstyles.left} style={{ height: "100%" }}>
                 <div className={loginstyles.login}>Login</div>
                 <div className={loginstyles.eula}>
                   By logging in you agree to the ridiculously long terms that
@@ -200,6 +203,7 @@ const Home = () => {
                             position: "inherit",
                             width: "fit-content",
                             stroke: "white",
+                            color: "white",
                           }}
                         />
                         &nbsp;Login with Google
@@ -209,7 +213,7 @@ const Home = () => {
                 </div>
               </div>
               <div className={loginstyles.right}>
-                <svg viewBox="0 0 320 300">
+                <svg className={loginstyles.svgLogin} viewBox="0 0 320 300">
                   <defs>
                     <linearGradient
                       id="linearGradient"
@@ -223,11 +227,17 @@ const Home = () => {
                       <stop stopColor="#ff0000" offset="1" id="stop878" />
                     </linearGradient>
                   </defs>
-                  <path d="m 40,120.00016 239.99984,-3.2e-4 c 0,0 24.99263,0.79932 25.00016,35.00016 0.008,34.20084 -25.00016,35 -25.00016,35 h -239.99984 c 0,-0.0205 -25,4.01348 -25,38.5 0,34.48652 25,38.5 25,38.5 h 215 c 0,0 20,-0.99604 20,-25 0,-24.00396 -20,-25 -20,-25 h -190 c 0,0 -20,1.71033 -20,25 0,24.00396 20,25 20,25 h 168.57143" />
+                  <path
+                    className={loginstyles.pathLogin}
+                    d="m 40,120.00016 239.99984,-3.2e-4 c 0,0 24.99263,0.79932 25.00016,35.00016 0.008,34.20084 -25.00016,35 -25.00016,35 h -239.99984 c 0,-0.0205 -25,4.01348 -25,38.5 0,34.48652 25,38.5 25,38.5 h 215 c 0,0 20,-0.99604 20,-25 0,-24.00396 -20,-25 -20,-25 h -190 c 0,0 -20,1.71033 -20,25 0,24.00396 20,25 20,25 h 168.57143"
+                  />
                 </svg>
                 <div className={loginstyles.form}>
-                  <label htmlFor="email">Username / Email</label>
+                  <label className={loginstyles.labelLogin} htmlFor="email">
+                    Username / Email
+                  </label>
                   <input
+                    className={loginstyles.inputLogin}
                     id="email"
                     type="text"
                     name="username"
@@ -236,8 +246,11 @@ const Home = () => {
                     onKeyDown={(e) => handleEnter(e)}
                     placeholder="example@email.com"
                   />
-                  <label htmlFor="password">Password</label>
+                  <label className={loginstyles.labelLogin} htmlFor="password">
+                    Password
+                  </label>
                   <input
+                    className={loginstyles.inputLogin}
                     id="password"
                     type="password"
                     name="password"
@@ -246,13 +259,30 @@ const Home = () => {
                     onKeyDown={(e) => handleEnter(e)}
                     placeholder="********"
                   />
-                  <input
-                    type="submit"
-                    id="submit"
-                    value="Submit"
-                    onClick={onLoginHandler}
-                    onFocus={(e) => submitFocusHandler(e)}
-                  />
+                  <br></br> <br></br>
+                  {isCallRequest === true || isLoading === true ? (
+                    <span
+                      style={{
+                        textAlign: "center",
+                        color: "darkorange",
+                        fontWeight: 700,
+                        margin: "0 auto",
+                        display: "table",
+                      }}
+                    >
+                      Logging...
+                    </span>
+                  ) : (
+                    <input
+                      className={loginstyles.inputLogin}
+                      type="submit"
+                      id="submit"
+                      value="Submit"
+                      onClick={onLoginHandler}
+                      onFocus={(e) => submitFocusHandler(e)}
+                      style={{ fontWeight: 700 }}
+                    />
+                  )}
                   <LoginSuccess hasError={hasError} />
                 </div>
               </div>
@@ -266,12 +296,19 @@ const Home = () => {
 
 //Error mess
 const LoginSuccess = (props) => {
-  const red = {
-    color: "red",
-    padding: "10px",
-  };
   if (props.hasError) {
-    return <div style={red}>Fail, check your username and password</div>;
+    return (
+      <div
+        style={{
+          color: "orangered",
+          fontWeight: 700,
+          fontSize: 12,
+          textAlign: "center",
+        }}
+      >
+        Fail, check your username and password
+      </div>
+    );
   }
   return null;
 };
