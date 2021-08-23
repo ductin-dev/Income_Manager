@@ -62,7 +62,7 @@ class Wallet extends Component {
               <img
                 style={{ marginTop: 28, borderRadius: 8 }}
                 src="https://img.freepik.com/free-vector/futuristic-night-city-background_52683-9062.jpg?size=626&ext=jpg"
-                class="img-fluid"
+                className="img-fluid"
                 alt="Beautiful"
               ></img>
             </p>

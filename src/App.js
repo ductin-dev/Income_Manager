@@ -15,15 +15,14 @@ function App() {
     <AuthContextProvider>
       <Router>
         <Header />
-
-        <Switch>
-          <div style={{ marginTop: 80, padding: 15 }}>
+        <div style={{ marginTop: 80, padding: 15 }}>
+          <Switch>
             <Route path="/wallets" component={Wallet} />
             <Route path="/about" component={About} />
             <Route path="/game" component={Game} />
             <Route exact path="/" component={Home} />
-          </div>
-        </Switch>
+          </Switch>
+        </div>
         <Footer />
       </Router>
     </AuthContextProvider>

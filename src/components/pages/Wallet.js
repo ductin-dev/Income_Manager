@@ -31,6 +31,7 @@ const Wallet = (props) => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
             JWT: authContext.token,
           },
           //credentials: "include",
@@ -102,6 +103,7 @@ const Wallet = (props) => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
             JWT: authContext.token,
           },
           //credentials: "include",
@@ -163,6 +165,7 @@ const Wallet = (props) => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
             JWT: authContext.token,
           },
           //credentials: "include",

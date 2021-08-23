@@ -38,6 +38,7 @@ const Home = () => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
           },
           method: "POST",
           body: JSON.stringify({
@@ -64,7 +65,7 @@ const Home = () => {
   const responseGoogle = (response) => {
     let email = response?.profileObj.email;
     let token = response?.tokenId;
-    if (email !== null && token !== null) onloginMailHandler(email, token);
+    if (email && token) onloginMailHandler(email, token);
   };
 
   //Form handler
@@ -131,6 +132,7 @@ const Home = () => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
         },
         method: "POST",
         body: JSON.stringify({
@@ -178,8 +180,8 @@ const Home = () => {
               <div className={loginstyles.left} style={{ height: "100%" }}>
                 <div className={loginstyles.login}>Login</div>
                 <div className={loginstyles.eula}>
-                  By logging in you agree to the ridiculously long terms that
-                  you didn't bother to read<br></br>
+                  (*) By logging in you agree to the ridiculously long terms
+                  that you didn't bother to read<br></br>
                   <GoogleLogin
                     clientId={CLIENT_ID}
                     onSuccess={responseGoogle}
