@@ -60,7 +60,7 @@ const Home = () => {
 
   //Login Mail API
   const responseGoogle = (response) => {
-    let email = response?.profileObj.email;
+    let email = response?.profileObj?.email;
     let token = response?.tokenId;
     console.log(response);
     console.log(email && token);
