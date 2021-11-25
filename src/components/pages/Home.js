@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useReducer } from "react";
 import { Redirect } from "react-router-dom";
 import GoogleLogin from "react-google-login";
 
@@ -27,8 +27,6 @@ const Home = () => {
   const [isCallRequest, setIsCallRequest] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setErrors] = useState(false);
-
-  //const [currentFocus, setCurrentFocus] = useState(null);
 
   //Login API
   useEffect(() => {

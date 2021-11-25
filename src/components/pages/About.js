@@ -1,6 +1,7 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 
 import textstyles from "../style/InfoText.module.css";
+
 class Wallet extends Component {
   render() {
     return (
