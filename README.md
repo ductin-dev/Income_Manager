@@ -1,6 +1,6 @@
 # Deployment
 
-https://sat-income.herokuapp.com
+https://satincome.netlify.app
 
 # Todo
 
